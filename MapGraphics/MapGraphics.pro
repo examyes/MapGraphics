@@ -34,7 +34,8 @@ SOURCES += MapGraphicsScene.cpp \
     guts/PrivateQGraphicsInfoSource.cpp \
     PolygonObject.cpp \
     Position.cpp \
-    LineObject.cpp
+    LineObject.cpp \
+    tileSources/FileSystemTileSource.cpp
 
 HEADERS += MapGraphicsScene.h\
         MapGraphics_global.h \
@@ -57,7 +58,8 @@ HEADERS += MapGraphicsScene.h\
     guts/PrivateQGraphicsInfoSource.h \
     PolygonObject.h \
     Position.h \
-    LineObject.h
+    LineObject.h \
+    tileSources/FileSystemTileSource.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

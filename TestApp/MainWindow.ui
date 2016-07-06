@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>1103</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuWindow">
@@ -43,7 +43,14 @@
     </property>
     <addaction name="actionExit"/>
    </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionRotate_10"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menu_Edit"/>
    <addaction name="menuWindow"/>
   </widget>
   <action name="actionExit">
@@ -52,6 +59,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionRotate_10">
+   <property name="text">
+    <string>Rotate 10</string>
    </property>
   </action>
  </widget>

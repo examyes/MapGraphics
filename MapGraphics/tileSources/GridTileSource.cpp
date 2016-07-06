@@ -1,4 +1,4 @@
-#include "GridTileSource.h"
+﻿#include "GridTileSource.h"
 
 #include <cmath>
 #include <QPainter>
@@ -42,7 +42,7 @@ QPointF GridTileSource::qgs2ll(const QPointF &qgs, quint8 zoomLevel) const
 
 quint64 GridTileSource::tilesOnZoomLevel(quint8 zoomLevel) const
 {
-    return pow(4.0,zoomLevel);
+    return pow(4.0, zoomLevel);
 }
 
 quint16 GridTileSource::tileSize() const

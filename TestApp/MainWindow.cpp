@@ -1,10 +1,11 @@
-#include "MainWindow.h"
+﻿#include "MainWindow.h"
 #include "ui_MainWindow.h"
 
 #include "MapGraphicsView.h"
 #include "MapGraphicsScene.h"
 #include "tileSources/GridTileSource.h"
 #include "tileSources/OSMTileSource.h"
+#include "tileSources/FileSystemTileSource.h"
 #include "tileSources/CompositeTileSource.h"
 #include "guts/CompositeTileSourceConfigurationWidget.h"
 #include "CircleObject.h"
@@ -26,17 +27,25 @@ MainWindow::MainWindow(QWidget *parent) :
     MapGraphicsScene * scene = new MapGraphicsScene(this);
     MapGraphicsView * view = new MapGraphicsView(scene,this);
 
+    m_view = view;
+
     //The view will be our central widget
     this->setCentralWidget(view);
 
     //Setup some tile sources
+#if 0
     QSharedPointer<OSMTileSource> osmTiles(new OSMTileSource(OSMTileSource::OSMTiles), &QObject::deleteLater);
     QSharedPointer<OSMTileSource> aerialTiles(new OSMTileSource(OSMTileSource::MapQuestAerialTiles), &QObject::deleteLater);
     QSharedPointer<GridTileSource> gridTiles(new GridTileSource(), &QObject::deleteLater);
+#endif
+    QSharedPointer<FileSystemTileSource> fsTiles(new FileSystemTileSource("C:/Users/examyes/Desktop/newtask/"), &QObject::deleteLater);
     QSharedPointer<CompositeTileSource> composite(new CompositeTileSource(), &QObject::deleteLater);
+#if 0
     composite->addSourceBottom(osmTiles);
     composite->addSourceBottom(aerialTiles);
     composite->addSourceTop(gridTiles);
+#endif
+    composite->addSourceTop(fsTiles);
     view->setTileSource(composite);
 
     //Create a widget in the dock that lets us configure tile source layers
@@ -48,11 +57,11 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->menuWindow->addAction(this->ui->dockWidget->toggleViewAction());
     this->ui->dockWidget->toggleViewAction()->setText("&Layers");
 
-    view->setZoomLevel(4);
-    view->centerOn(-111.658752, 40.255456);
+    view->setZoomLevel(13);
+    view->centerOn(120.320667362213, 31.428553009033);
 
-    WeatherManager * weatherMan = new WeatherManager(scene, this);
-    Q_UNUSED(weatherMan)
+    // WeatherManager * weatherMan = new WeatherManager(scene, this);
+    // Q_UNUSED(weatherMan)
 }
 
 MainWindow::~MainWindow()
@@ -64,4 +73,9 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionExit_triggered()
 {
     this->close();
+}
+
+void MainWindow::on_actionRotate_10_triggered()
+{
+    m_view->rotate(10);
 }

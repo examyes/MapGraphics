@@ -1,4 +1,4 @@
-#ifndef MAPGRAPHICSVIEW_H
+﻿#ifndef MAPGRAPHICSVIEW_H
 #define MAPGRAPHICSVIEW_H
 
 #include <QWidget>
@@ -71,6 +71,8 @@ public:
 
     void zoomIn(ZoomMode zMode = CenterZoom);
     void zoomOut(ZoomMode zMode = CenterZoom);
+
+    void rotate(qreal angle);
     
 signals:
     void zoomLevelChanged(quint8 nZoom);

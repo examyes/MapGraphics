@@ -1,4 +1,4 @@
-#include "OSMTileSource.h"
+﻿#include "OSMTileSource.h"
 
 #include "guts/MapGraphicsNetwork.h"
 
@@ -214,5 +214,6 @@ void OSMTileSource::handleNetworkRequestFinished()
     }
 
     //Notify client of tile retrieval
-    this->prepareNewlyReceivedTile(x,y,z, image, expireTime);
+    // this->prepareNewlyReceivedTile(x,y,z, image, expireTime);
+    this->prepareNewlyReceivedTile(x,y,z, image);
 }

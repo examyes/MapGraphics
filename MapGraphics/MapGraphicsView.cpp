@@ -1,4 +1,4 @@
-#include "MapGraphicsView.h"
+﻿#include "MapGraphicsView.h"
 
 #include <QVBoxLayout>
 #include <QTimer>
@@ -310,6 +310,11 @@ void MapGraphicsView::zoomOut(ZoomMode zMode)
 
     if (this->zoomLevel() > _tileSource->minZoomLevel())
         this->setZoomLevel(this->zoomLevel()-1,zMode);
+}
+
+void MapGraphicsView::rotate(qreal angle)
+{
+    _childView->rotate(angle);
 }
 
 //protected slot
