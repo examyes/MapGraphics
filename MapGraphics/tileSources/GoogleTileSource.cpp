@@ -1,4 +1,4 @@
-﻿#include "OSMTileSource.h"
+﻿#include "GoogleTileSource.h"
 
 #include "guts/MapGraphicsNetwork.h"
 
@@ -12,18 +12,18 @@ const qreal PI = 3.14159265358979323846;
 const qreal deg2rad = PI / 180.0;
 const qreal rad2deg = 180.0 / PI;
 
-OSMTileSource::OSMTileSource(OSMTileType tileType) :
+GoogleTileSource::GoogleTileSource(GoogleTileType tileType) :
     MapTileSource(), _tileType(tileType)
 {
     this->setCacheMode(MapTileSource::DiskAndMemCaching);
 }
 
-OSMTileSource::~OSMTileSource()
+GoogleTileSource::~GoogleTileSource()
 {
     qDebug() << this << this->name() << "Destructing";
 }
 
-QPointF OSMTileSource::ll2qgs(const QPointF &ll, quint8 zoomLevel) const
+QPointF GoogleTileSource::ll2qgs(const QPointF &ll, quint8 zoomLevel) const
 {
     const qreal tilesOnOneEdge = pow(2.0,zoomLevel);
     const quint16 tileSize = this->tileSize();
@@ -33,7 +33,7 @@ QPointF OSMTileSource::ll2qgs(const QPointF &ll, quint8 zoomLevel) const
     return QPoint(int(x), int(y));
 }
 
-QPointF OSMTileSource::qgs2ll(const QPointF &qgs, quint8 zoomLevel) const
+QPointF GoogleTileSource::qgs2ll(const QPointF &qgs, quint8 zoomLevel) const
 {
     const qreal tilesOnOneEdge = pow(2.0,zoomLevel);
     const quint16 tileSize = this->tileSize();
@@ -43,42 +43,58 @@ QPointF OSMTileSource::qgs2ll(const QPointF &qgs, quint8 zoomLevel) const
     return QPointF(longitude, latitude);
 }
 
-quint64 OSMTileSource::tilesOnZoomLevel(quint8 zoomLevel) const
+quint64 GoogleTileSource::tilesOnZoomLevel(quint8 zoomLevel) const
 {
     return pow(4.0,zoomLevel);
 }
 
-quint16 OSMTileSource::tileSize() const
+quint16 GoogleTileSource::tileSize() const
 {
     return 256;
 }
 
-quint8 OSMTileSource::minZoomLevel(QPointF ll)
+quint8 GoogleTileSource::minZoomLevel(QPointF ll)
 {
     Q_UNUSED(ll)
     return 0;
 }
 
-quint8 OSMTileSource::maxZoomLevel(QPointF ll)
+quint8 GoogleTileSource::maxZoomLevel(QPointF ll)
 {
     Q_UNUSED(ll)
     return 18;
 }
 
-QString OSMTileSource::name() const
+QString GoogleTileSource::name() const
 {
     switch(_tileType)
     {
-    case OSMTiles:
-        return "OpenStreetMap Tiles";
+    case MAP:
+        return "Google Map Tiles";
         break;
 
-    case MapQuestOSMTiles:
-        return "MapQuestOSM Tiles";
+    case SKELETON_MAP_LIGHT:
+        return "Google Skeleton Map Light Tiles";
         break;
 
-    case MapQuestAerialTiles:
-        return "MapQuest Aerial Tiles";
+    case SKELETON_MAP_DARK:
+        return "Google Skeleton Map Dark Tiles";
+        break;
+
+    case TERRAIN:
+        return "Google Terrain Tiles";
+        break;
+
+    case TERRAIN_MAP:
+        return "Google Terrain Map Tiles";
+        break;
+
+    case SATELLITE:
+        return "Google Satellite Tiles";
+        break;
+
+    case HYBRID_SATELLITE_MAP:
+        return "Google Hybrid Satellite Map Tiles";
         break;
 
     default:
@@ -87,16 +103,18 @@ QString OSMTileSource::name() const
     }
 }
 
-QString OSMTileSource::tileFileExtension() const
+QString GoogleTileSource::tileFileExtension() const
 {
-    if (_tileType == OSMTiles || _tileType == MapQuestOSMTiles)
+    if (_tileType == MAP ||
+        _tileType == SKELETON_MAP_LIGHT ||
+        _tileType == SKELETON_MAP_DARK)
         return "png";
     else
         return "jpg";
 }
 
 //protected
-void OSMTileSource::fetchTile(quint32 x, quint32 y, quint8 z)
+void GoogleTileSource::fetchTile(quint32 x, quint32 y, quint8 z)
 {
     MapGraphicsNetwork * network = MapGraphicsNetwork::getInstance();
 
@@ -104,22 +122,41 @@ void OSMTileSource::fetchTile(quint32 x, quint32 y, quint8 z)
     QString url;
 
     //Figure out which server to request from based on our desired tile type
-    if (_tileType == OSMTiles)
+    if (_tileType == MAP)
     {
-        host = "http://b.tile.openstreetmap.org";
-        url = "/%1/%2/%3.png";
+        host = "http://mt2.google.cn/vt/lyrs=m&hl=zh-CN&gl=cn&";
+        url = "x=%1&y=%2&z=%3";
     }
-    else if (_tileType == MapQuestOSMTiles)
+    else if (_tileType == SKELETON_MAP_LIGHT)
     {
-        host = "http://otile1.mqcdn.com";
-        url = "/tiles/1.0.0/osm/%1/%2/%3.jpg";
+        host = "http://mt2.google.cn/vt/lyrs=h&hl=zh-CN&gl=cn&";
+        url = "x=%1&y=%2&z=%3";
     }
-    else
+    else if (_tileType == SKELETON_MAP_DARK)
     {
-        host = "http://otile1.mqcdn.com";
-        url = "/tiles/1.0.0/sat/%1/%2/%3.jpg";
+        host = "http://mt2.google.cn/vt/lyrs=r&hl=zh-CN&gl=cn&";
+        url = "x=%1&y=%2&z=%3";
     }
-
+    else if (_tileType == TERRAIN)
+    {
+        host = "http://mt0.google.cn/vt/lyrs=t&hl=zh-CN&gl=cn&";
+        url = "x=%1&y=%2&z=%3";
+    }
+    else if (_tileType == TERRAIN_MAP)
+    {
+        host = "http://mt2.google.cn/vt/lyrs=p&hl=zh-CN&gl=cn&";
+        url = "x=%1&y=%2&z=%3";
+    }
+    else if (_tileType == SATELLITE)
+    {
+        host = "http://mt3.google.cn/vt/lyrs=s&hl=zh-CN&gl=cn&";
+        url = "x=%1&y=%2&z=%3";
+    }
+    else if (_tileType == HYBRID_SATELLITE_MAP)
+    {
+        host = "http://mt1.google.cn/vt/lyrs=y&hl=zh-CN&gl=cn&";
+        url = "x=%1&y=%2&z=%3";
+    }
 
     //Use the unique cacheID to see if this tile has already been requested
     const QString cacheID = this->createCacheID(x,y,z);
@@ -128,9 +165,9 @@ void OSMTileSource::fetchTile(quint32 x, quint32 y, quint8 z)
     _pendingRequests.insert(cacheID);
 
     //Build the request
-    const QString fetchURL = url.arg(QString::number(z),
-                                     QString::number(x),
-                                     QString::number(y));
+    const QString fetchURL = url.arg(QString::number(x),
+                                     QString::number(y),
+                                     QString::number(z));
     QNetworkRequest request(QUrl(host + fetchURL));
 
     //Send the request and setupd a signal to ensure we're notified when it finishes
@@ -144,7 +181,7 @@ void OSMTileSource::fetchTile(quint32 x, quint32 y, quint8 z)
 }
 
 //private slot
-void OSMTileSource::handleNetworkRequestFinished()
+void GoogleTileSource::handleNetworkRequestFinished()
 {
     QObject * sender = QObject::sender();
     QNetworkReply * reply = qobject_cast<QNetworkReply *>(sender);

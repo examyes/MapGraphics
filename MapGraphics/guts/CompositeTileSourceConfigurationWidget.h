@@ -1,4 +1,4 @@
-#ifndef COMPOSITETILESOURCECONFIGURATIONWIDGET_H
+﻿#ifndef COMPOSITETILESOURCECONFIGURATIONWIDGET_H
 #define COMPOSITETILESOURCECONFIGURATIONWIDGET_H
 
 #include <QWidget>
@@ -25,10 +25,18 @@ public:
 
 private slots:
     void handleCurrentSelectionChanged(QModelIndex,QModelIndex);
-    void handleCompositeChange();
+    void handleCompositeChange();    
     void addOSMTileLayer();
     void addMapQuestLayer();
     void addMapQuestSatLayer();
+    void addGridTileLayer();
+    void addGoogleMapLayer();
+    void addGoogleSkeletonMapLightLayer();
+    void addGoogleSkeletonMapDarkLayer();
+    void addGoogleTerrainLayer();
+    void addGoogleTerrainMapLayer();
+    void addGoogleSatelliteLayer();
+    void addGoogleHybridSatelliteMapLayer();
 
     void on_removeSourceButton_clicked();
 

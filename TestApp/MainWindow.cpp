@@ -7,6 +7,7 @@
 #include "tileSources/OSMTileSource.h"
 #include "tileSources/FileSystemTileSource.h"
 #include "tileSources/CompositeTileSource.h"
+#include "tileSources/GoogleTileSource.h"
 #include "guts/CompositeTileSourceConfigurationWidget.h"
 #include "CircleObject.h"
 #include "PolygonObject.h"
@@ -33,18 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setCentralWidget(view);
 
     //Setup some tile sources
-#if 0
-    QSharedPointer<OSMTileSource> osmTiles(new OSMTileSource(OSMTileSource::OSMTiles), &QObject::deleteLater);
-    QSharedPointer<OSMTileSource> aerialTiles(new OSMTileSource(OSMTileSource::MapQuestAerialTiles), &QObject::deleteLater);
-    QSharedPointer<GridTileSource> gridTiles(new GridTileSource(), &QObject::deleteLater);
-#endif
-    QSharedPointer<FileSystemTileSource> fsTiles(new FileSystemTileSource("C:/Users/examyes/Desktop/newtask/"), &QObject::deleteLater);
+    QSharedPointer<FileSystemTileSource> fsTiles(new FileSystemTileSource("C:/Users/examyes/Desktop/map/"), &QObject::deleteLater);
     QSharedPointer<CompositeTileSource> composite(new CompositeTileSource(), &QObject::deleteLater);
-#if 0
-    composite->addSourceBottom(osmTiles);
-    composite->addSourceBottom(aerialTiles);
-    composite->addSourceTop(gridTiles);
-#endif
+
     composite->addSourceTop(fsTiles);
     view->setTileSource(composite);
 

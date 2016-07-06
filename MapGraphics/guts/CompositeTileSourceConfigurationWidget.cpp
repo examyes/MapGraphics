@@ -1,10 +1,12 @@
-#include "CompositeTileSourceConfigurationWidget.h"
+﻿#include "CompositeTileSourceConfigurationWidget.h"
 #include "ui_CompositeTileSourceConfigurationWidget.h"
 
 #include "MapTileLayerListModel.h"
 #include "MapTileSourceDelegate.h"
 
+#include "tileSources/GridTileSource.h"
 #include "tileSources/OSMTileSource.h"
+#include "tileSources/GoogleTileSource.h"
 
 #include <QtDebug>
 #include <QMenu>
@@ -98,6 +100,86 @@ void CompositeTileSourceConfigurationWidget::addMapQuestSatLayer()
         return;
 
     QSharedPointer<OSMTileSource> source(new OSMTileSource(OSMTileSource::MapQuestAerialTiles));
+    composite->addSourceTop(source);
+}
+
+void CompositeTileSourceConfigurationWidget::addGridTileLayer()
+{
+    QSharedPointer<CompositeTileSource> composite = _composite.toStrongRef();
+    if (composite.isNull())
+        return;
+
+    QSharedPointer<GridTileSource> source(new GridTileSource());
+    composite->addSourceTop(source);
+}
+
+void CompositeTileSourceConfigurationWidget::addGoogleMapLayer()
+{
+    QSharedPointer<CompositeTileSource> composite = _composite.toStrongRef();
+    if (composite.isNull())
+        return;
+
+    QSharedPointer<GoogleTileSource> source(new GoogleTileSource(GoogleTileSource::MAP));
+    composite->addSourceTop(source);
+}
+
+void CompositeTileSourceConfigurationWidget::addGoogleSkeletonMapLightLayer()
+{
+    QSharedPointer<CompositeTileSource> composite = _composite.toStrongRef();
+    if (composite.isNull())
+        return;
+
+    QSharedPointer<GoogleTileSource> source(new GoogleTileSource(GoogleTileSource::SKELETON_MAP_LIGHT));
+    composite->addSourceTop(source);
+}
+
+void CompositeTileSourceConfigurationWidget::addGoogleSkeletonMapDarkLayer()
+{
+    QSharedPointer<CompositeTileSource> composite = _composite.toStrongRef();
+    if (composite.isNull())
+        return;
+
+    QSharedPointer<GoogleTileSource> source(new GoogleTileSource(GoogleTileSource::SKELETON_MAP_DARK));
+    composite->addSourceTop(source);
+}
+
+void CompositeTileSourceConfigurationWidget::addGoogleTerrainLayer()
+{
+    QSharedPointer<CompositeTileSource> composite = _composite.toStrongRef();
+    if (composite.isNull())
+        return;
+
+    QSharedPointer<GoogleTileSource> source(new GoogleTileSource(GoogleTileSource::TERRAIN));
+    composite->addSourceTop(source);
+}
+
+void CompositeTileSourceConfigurationWidget::addGoogleTerrainMapLayer()
+{
+    QSharedPointer<CompositeTileSource> composite = _composite.toStrongRef();
+    if (composite.isNull())
+        return;
+
+    QSharedPointer<GoogleTileSource> source(new GoogleTileSource(GoogleTileSource::TERRAIN_MAP));
+    composite->addSourceTop(source);
+}
+
+void CompositeTileSourceConfigurationWidget::addGoogleSatelliteLayer()
+{
+    QSharedPointer<CompositeTileSource> composite = _composite.toStrongRef();
+    if (composite.isNull())
+        return;
+
+    QSharedPointer<GoogleTileSource> source(new GoogleTileSource(GoogleTileSource::SATELLITE));
+    composite->addSourceTop(source);
+}
+
+void CompositeTileSourceConfigurationWidget::addGoogleHybridSatelliteMapLayer()
+{
+    QSharedPointer<CompositeTileSource> composite = _composite.toStrongRef();
+    if (composite.isNull())
+        return;
+
+    QSharedPointer<GoogleTileSource> source(new GoogleTileSource(GoogleTileSource::HYBRID_SATELLITE_MAP));
     composite->addSourceTop(source);
 }
 
@@ -205,8 +287,18 @@ void CompositeTileSourceConfigurationWidget::init()
 
     //Build a menu of possible sources for the "add" button
     QMenu * menu = new QMenu(this->ui->addSourceButton);
+    menu->addAction("GridTile Tiles", this, SLOT(addGridTileLayer()));
     menu->addAction("OpenStreetMap Tiles", this, SLOT(addOSMTileLayer()));
     menu->addAction("MapQuest-OSM Tiles", this, SLOT(addMapQuestLayer()));
     menu->addAction("MapQuest Open Aerial Tiles", this, SLOT(addMapQuestSatLayer()));
+    menu->addAction("Google Map Tiles", this, SLOT(addGoogleMapLayer()));
+    menu->addAction("Google Skeleton Map Light Tiles", this, SLOT(addGoogleSkeletonMapLightLayer()));
+    menu->addAction("Google Skeleton Map Dark Tiles", this, SLOT(addGoogleSkeletonMapDarkLayer()));
+    menu->addAction("Google Terrain Tiles", this, SLOT(addGoogleTerrainLayer()));
+    menu->addAction("Google Terrain Map Tiles", this, SLOT(addGoogleTerrainMapLayer()));
+    menu->addAction("Google Satellite Tiles", this, SLOT(addGoogleSatelliteLayer()));
+    menu->addAction("Google Hybrid Satellite Map Tiles", this, SLOT(addGoogleHybridSatelliteMapLayer()));
+
+
     this->ui->addSourceButton->setMenu(menu);
 }

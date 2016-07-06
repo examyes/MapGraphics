@@ -35,7 +35,8 @@ SOURCES += MapGraphicsScene.cpp \
     PolygonObject.cpp \
     Position.cpp \
     LineObject.cpp \
-    tileSources/FileSystemTileSource.cpp
+    tileSources/FileSystemTileSource.cpp \
+    tileSources/GoogleTileSource.cpp
 
 HEADERS += MapGraphicsScene.h\
         MapGraphics_global.h \
@@ -59,7 +60,8 @@ HEADERS += MapGraphicsScene.h\
     PolygonObject.h \
     Position.h \
     LineObject.h \
-    tileSources/FileSystemTileSource.h
+    tileSources/FileSystemTileSource.h \
+    tileSources/GoogleTileSource.h
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN
