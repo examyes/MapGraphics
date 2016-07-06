@@ -47,11 +47,22 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="actionRotate_10"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Edit"/>
    <addaction name="menuWindow"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
   </widget>
   <action name="actionExit">
    <property name="text">
@@ -59,11 +70,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
-   </property>
-  </action>
-  <action name="actionRotate_10">
-   <property name="text">
-    <string>Rotate 10</string>
    </property>
   </action>
  </widget>

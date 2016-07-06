@@ -99,6 +99,11 @@ void MapGraphicsView::centerOn(const MapGraphicsObject *item)
         this->centerOn(item->pos());
 }
 
+void MapGraphicsView::enableMousePositionReport(bool enabled)
+{
+    _childView->setMouseTracking(enabled);
+}
+
 QPointF MapGraphicsView::mapToScene(const QPoint viewPos) const
 {
     if (_tileSource.isNull())
@@ -211,6 +216,8 @@ void MapGraphicsView::setScene(MapGraphicsScene * scene)
 
     //Reset the drag mode for the new child view
     this->setDragMode(this->dragMode());
+
+    _childView->setMouseTracking(true);
 }
 
 QSharedPointer<MapTileSource> MapGraphicsView::tileSource() const
@@ -327,6 +334,8 @@ void MapGraphicsView::handleChildMouseDoubleClick(QMouseEvent *event)
 void MapGraphicsView::handleChildMouseMove(QMouseEvent *event)
 {
     event->setAccepted(false);
+
+    emit mousePositionChanged(event->pos(), this->mapToScene(event->pos()));
 }
 
 //protected slot

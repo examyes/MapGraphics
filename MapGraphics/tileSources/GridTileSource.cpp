@@ -87,7 +87,7 @@ void GridTileSource::fetchTile(quint32 x, quint32 y, quint8 z)
 
     QPainter painter(toRet);
     painter.setPen(Qt::black);
-    //painter.fillRect(toRet->rect(),QColor(0,0,0,0));
+    // painter.fillRect(toRet->rect(),QColor(0,0,0,0));
 
     qreal everyNDegrees = 10.0;
 

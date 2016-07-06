@@ -16,13 +16,28 @@
 #include <QSharedPointer>
 #include <QtDebug>
 #include <QThread>
+#include <QComboBox>
+#include <QSpinBox>
 #include <QImage>
+#include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    m_current_roration(0)
 {
     ui->setupUi(this);
+
+    m_spin_zoomlevel = new QSpinBox;
+    m_spin_zoomlevel->setRange(0, 18);
+    m_spin_rotation = new QSpinBox;
+    m_spin_rotation->setRange(-360, 360);
+
+    ui->toolBar->addWidget(new QLabel(tr("ZoomLevel:")));
+    ui->toolBar->addWidget(m_spin_zoomlevel);
+    ui->toolBar->addSeparator();
+    ui->toolBar->addWidget(new QLabel(tr("Rotation:")));
+    ui->toolBar->addWidget(m_spin_rotation);
 
     //Setup the MapGraphics scene and view
     MapGraphicsScene * scene = new MapGraphicsScene(this);
@@ -51,6 +66,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
     view->setZoomLevel(13);
     view->centerOn(120.320667362213, 31.428553009033);
+    view->enableMousePositionReport(true);
+
+    m_spin_zoomlevel->setValue(view->zoomLevel());
+
+    connect(view, SIGNAL(mousePositionChanged(QPointF,QPointF)),
+            this, SLOT(onMousePositionChanged(QPointF,QPointF)));
+
+    connect(view, SIGNAL(zoomLevelChanged(quint8)),
+            this, SLOT(onZoomLevelChanged(quint8)));
+
+    connect(m_spin_zoomlevel, SIGNAL(valueChanged(int)),
+            this, SLOT(setZoomLevel(int)));
+
+    connect(m_spin_rotation, SIGNAL(valueChanged(int)),
+            this, SLOT(setRotation(int)));
 
     // WeatherManager * weatherMan = new WeatherManager(scene, this);
     // Q_UNUSED(weatherMan)
@@ -67,7 +97,30 @@ void MainWindow::on_actionExit_triggered()
     this->close();
 }
 
-void MainWindow::on_actionRotate_10_triggered()
+void MainWindow::onMousePositionChanged(QPointF viewPos, QPointF ll)
 {
-    m_view->rotate(10);
+    QString message = QString("View Position: (%1, %2), Geo Position: (%3, %4)")
+            .arg(viewPos.x())
+            .arg(viewPos.y())
+            .arg(ll.x(), 0, 'f', 14)
+            .arg(ll.y(), 0, 'f', 14);
+    ui->statusBar->showMessage(message);
+}
+
+void MainWindow::setZoomLevel(int i)
+{
+    m_view->setZoomLevel(i);
+}
+
+void MainWindow::onZoomLevelChanged(quint8 nZoom)
+{
+    m_spin_zoomlevel->setValue(nZoom);
+}
+
+void MainWindow::setRotation(int i)
+{
+    m_view->rotate(-m_current_roration);
+    m_view->rotate(i);
+
+    m_current_roration = i;
 }

@@ -7,6 +7,9 @@ namespace Ui {
 class MainWindow;
 }
 
+class QComboBox;
+class QSpinBox;
+
 class MapGraphicsView;
 
 class MainWindow : public QMainWindow
@@ -20,11 +23,19 @@ public:
 private slots:
     void on_actionExit_triggered();
 
-    void on_actionRotate_10_triggered();
+    void onMousePositionChanged(QPointF viewPos, QPointF ll);
+    void onZoomLevelChanged(quint8 nZoom);
+
+    void setZoomLevel(int i);
+    void setRotation(int i);
 
 private:
     Ui::MainWindow *ui;
     MapGraphicsView *m_view;
+    QSpinBox *m_spin_zoomlevel;
+    QSpinBox *m_spin_rotation;
+    int m_current_roration;
+
 };
 
 #endif // MAINWINDOW_H

@@ -46,6 +46,8 @@ public:
     void centerOn(qreal longitude, qreal latitude);
     void centerOn(const MapGraphicsObject * item);
 
+    void enableMousePositionReport(bool enabled);
+
     QPointF mapToScene(const QPoint viewPos) const;
 
     MapGraphicsView::DragMode dragMode() const;
@@ -76,6 +78,7 @@ public:
     
 signals:
     void zoomLevelChanged(quint8 nZoom);
+    void mousePositionChanged(QPointF viewPos, QPointF ll);
     
 public slots:
 

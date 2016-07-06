@@ -5,6 +5,7 @@
 #include "MapTileSourceDelegate.h"
 
 #include "tileSources/GridTileSource.h"
+#include "tileSources/LabelTileSource.h"
 #include "tileSources/OSMTileSource.h"
 #include "tileSources/GoogleTileSource.h"
 
@@ -100,6 +101,16 @@ void CompositeTileSourceConfigurationWidget::addMapQuestSatLayer()
         return;
 
     QSharedPointer<OSMTileSource> source(new OSMTileSource(OSMTileSource::MapQuestAerialTiles));
+    composite->addSourceTop(source);
+}
+
+void CompositeTileSourceConfigurationWidget::addLabelTileLayer()
+{
+    QSharedPointer<CompositeTileSource> composite = _composite.toStrongRef();
+    if (composite.isNull())
+        return;
+
+    QSharedPointer<LabelTileSource> source(new LabelTileSource());
     composite->addSourceTop(source);
 }
 
@@ -287,6 +298,7 @@ void CompositeTileSourceConfigurationWidget::init()
 
     //Build a menu of possible sources for the "add" button
     QMenu * menu = new QMenu(this->ui->addSourceButton);
+    menu->addAction("LabelTile Tiles", this, SLOT(addLabelTileLayer()));
     menu->addAction("GridTile Tiles", this, SLOT(addGridTileLayer()));
     menu->addAction("OpenStreetMap Tiles", this, SLOT(addOSMTileLayer()));
     menu->addAction("MapQuest-OSM Tiles", this, SLOT(addMapQuestLayer()));

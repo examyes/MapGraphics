@@ -29,6 +29,7 @@ private slots:
     void addOSMTileLayer();
     void addMapQuestLayer();
     void addMapQuestSatLayer();
+    void addLabelTileLayer();
     void addGridTileLayer();
     void addGoogleMapLayer();
     void addGoogleSkeletonMapLightLayer();
