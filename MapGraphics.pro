@@ -1,6 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS += MapGraphics \
-    TestApp
+    TestApp \
+    TileDownloader \
 
 TestApp.depends += MapGraphics
+TileDownloader.depends += MapGraphics

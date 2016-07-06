@@ -1,11 +1,13 @@
-#ifndef MAPGRAPHICSNETWORK_H
+﻿#ifndef MAPGRAPHICSNETWORK_H
 #define MAPGRAPHICSNETWORK_H
 
 #include <QMutex>
 #include <QNetworkAccessManager>
 #include <QHash>
 
-class MapGraphicsNetwork
+#include "MapGraphics_global.h"
+
+class MAPGRAPHICSSHARED_EXPORT MapGraphicsNetwork
 {
 public:
     static MapGraphicsNetwork * getInstance();
