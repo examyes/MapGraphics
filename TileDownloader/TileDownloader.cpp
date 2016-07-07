@@ -7,6 +7,8 @@
 #include <QDir>
 #include <QUrl>
 #include <QImage>
+#include <QFileInfo>
+#include <QApplication>
 
 #include "guts/MapGraphicsNetwork.h"
 
@@ -16,8 +18,9 @@ const qreal PI = 3.14159265358979323846;
 const qreal deg2rad = PI / 180.0;
 const qreal rad2deg = 180.0 / PI;
 
-TileDownloader::TileDownloader(QObject *parent) :
-    QObject(parent)
+TileDownloader::TileDownloader(QObject *parent)
+    : QObject(parent)
+    , m_tiles_count(0)
 {
 
 }
@@ -58,43 +61,104 @@ bool TileDownloader::cacheID2xyz(const QString &string, quint32 *x, quint32 *y, 
     return ok;
 }
 
-void TileDownloader::download(QPointF geo_start, QPointF geo_stop, int zoom_level, const QString &url_pattern, const QString &path_to_save)
+void TileDownloader::checkProgress()
 {
-    m_path_to_save = path_to_save;
-
-    int z = zoom_level;
-
-    QPoint start = latlon2xy(geo_start.x(), geo_start.y() ,z);
-    QPoint stop = latlon2xy(geo_stop.x(), geo_stop.y(), z);
-
-    qDebug() << "Tiles Count = " << (stop.x() - start.x()) * (stop.y() - start.y());
-
-    MapGraphicsNetwork * network = MapGraphicsNetwork::getInstance();
-
-    for (int x = start.x(); x < stop.x(); x++)
+    if (m_pending_requests.isEmpty())
     {
-        for (int y = start.y(); y < stop.y(); y++)
+        if (m_current_row == m_stop.x() - 1)
         {
-            //Use the unique cacheID to see if this tile has already been requested
-            const QString cacheID = createCacheID(x, y, z);
-            if (m_pending_requests.contains(cacheID))
+            emit downloadFinished();
+        }
+        else
+        {
+            ++m_current_row;
+            downloadRow(m_current_row);
+        }
+
+    }
+
+}
+
+void TileDownloader::downloadRow(int row)
+{
+    MapGraphicsNetwork * network = MapGraphicsNetwork::getInstance();
+    int x = row;
+    int z = m_zoom_level;
+
+    for (int y = m_start.y(); y < m_stop.y(); y++)
+    {
+        if (!m_overwrite)
+        {
+            QString filename = m_path_to_save + QString("/%3_%1_%2_s.jpg").arg(x).arg(y).arg(z);
+            QFileInfo file_info(filename);
+            if (file_info.exists())
+            {
                 continue;
-            m_pending_requests.insert(cacheID);
+            }
+        }
 
-            //Build the request
-            const QString fetchURL = url_pattern.arg(QString::number(x),
-                                             QString::number(y),
-                                             QString::number(z));
-            QNetworkRequest request(QUrl(fetchURL + ""));
+        //Use the unique cacheID to see if this tile has already been requested
+        const QString cacheID = createCacheID(x, y, z);
+        if (m_pending_requests.contains(cacheID))
+            continue;
 
-            //Send the request and setupd a signal to ensure we're notified when it finishes
-            QNetworkReply * reply = network->get(request);
-            m_pending_replies.insert(reply, cacheID);
+        m_pending_requests.insert(cacheID);
 
-            connect(reply, SIGNAL(finished()),
-                    this, SLOT(handleNetworkRequestFinished()));
+        //Build the request
+        const QString fetchURL = m_url_pattern.arg(QString::number(x),
+                                         QString::number(y),
+                                         QString::number(z));
+        QNetworkRequest request(QUrl(fetchURL + ""));
+
+        //Send the request and setupd a signal to ensure we're notified when it finishes
+        QNetworkReply * reply = network->get(request);
+        m_pending_replies.insert(reply, cacheID);
+
+        connect(reply, SIGNAL(finished()),
+                this, SLOT(handleNetworkRequestFinished()));
+
+    }
+
+    checkProgress();
+}
+
+void TileDownloader::download(QPointF geo_start, QPointF geo_stop, int zoom_level,
+                              const QString &url_pattern, const QString &path_to_save, bool overwrite)
+{
+    m_tiles_count = 0;
+    m_downloaded_count = 0;
+    m_overwrite = overwrite;
+    m_zoom_level = zoom_level;
+    m_url_pattern = url_pattern;
+    m_path_to_save = path_to_save;
+    m_start = latlon2xy(geo_start.x(), geo_start.y(), m_zoom_level);
+    m_stop = latlon2xy(geo_stop.x(), geo_stop.y(), m_zoom_level);
+
+    emit dbg("Tiles Count = "  + QString::number((m_stop.x() - m_start.x()) * (m_stop.y() - m_start.y())));
+
+    if (!overwrite)
+    {
+        for (int x = m_start.x(); x < m_stop.x(); x++)
+        {
+            emit dbg("[Calculate Skip Tiles] Row: " + QString::number(x));
+            for (int y = m_start.y(); y < m_stop.y(); y++)
+            {
+                QString filename = m_path_to_save + QString("/%3_%1_%2_s.jpg").arg(x).arg(y).arg(m_zoom_level);
+                QFileInfo file_info(filename);
+                if (file_info.exists())
+                {
+                    continue;
+                }
+                else
+                {
+                    ++m_tiles_count;
+                }
+            }
         }
     }
+
+    m_current_row = m_start.x();
+    downloadRow(m_current_row);
 }
 
 void TileDownloader::handleNetworkRequestFinished()
@@ -123,6 +187,12 @@ void TileDownloader::handleNetworkRequestFinished()
     //get the cacheID
     const QString cacheID = m_pending_replies.take(reply);
     m_pending_requests.remove(cacheID);
+
+    ++m_downloaded_count;
+
+    emit showMessage(QString("[%1/%2]")
+                     .arg(m_downloaded_count)
+                     .arg(m_tiles_count));
 
     //If there was a network error, ignore the reply
     if (reply->error() != QNetworkReply::NoError)
@@ -154,9 +224,8 @@ void TileDownloader::handleNetworkRequestFinished()
 
     delete image;
 
-    qDebug() << "[Complete] " + filename;
+    emit dbg("[Complete] " + filename);
 
-    if (m_pending_requests.isEmpty())
-        qDebug() << "[Task Finished!]";
+    checkProgress();
 }
 

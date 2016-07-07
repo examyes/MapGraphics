@@ -14,9 +14,14 @@ public:
     explicit TileDownloader(QObject *parent = 0);
 
 signals:
+    void dbg(const QString &message);
+    void downloadFinished();
+    void showMessage(const QString &message);
 
 public slots:
-    void download(QPointF geo_start, QPointF geo_stop, int zoom_level, const QString &url_pattern, const QString &path_to_save);
+    void download(QPointF geo_start, QPointF geo_stop, int zoom_level,
+                  const QString &url_pattern, const QString &path_to_save,
+                  bool overwrite);
 
 private slots:
     void handleNetworkRequestFinished();
@@ -47,6 +52,10 @@ private:
      */
     bool cacheID2xyz(const QString & string, quint32 * x, quint32 * y, quint32 * z);
 
+    void checkProgress();
+
+    void downloadRow(int row);
+
 private:
     //Set used to ensure a tile with a certain cacheID isn't requested twice
     QSet<QString> m_pending_requests;
@@ -55,4 +64,12 @@ private:
     QHash<QNetworkReply *, QString> m_pending_replies;
 
     QString m_path_to_save;
+    int m_tiles_count;
+    int m_downloaded_count;
+    QPoint m_start;
+    QPoint m_stop;
+    int m_zoom_level;
+    int m_current_row;
+    bool m_overwrite;
+    QString m_url_pattern;
 };

@@ -32,11 +32,6 @@
           <height>0</height>
          </size>
         </property>
-        <item>
-         <property name="text">
-          <string>Google Map</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item>
@@ -297,7 +292,14 @@
       <property name="title">
        <string>下载</string>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_11">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QCheckBox" name="check_skip">
+         <property name="text">
+          <string>跳过已下载文件</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
@@ -344,7 +346,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_10">
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="btn_start">
         <property name="text">
          <string>开始下载</string>
         </property>
@@ -352,6 +354,53 @@
       </item>
       <item>
        <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_11">
+      <item>
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>日志缓冲区大小：</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="spin_log_buffer_size">
+        <property name="minimumSize">
+         <size>
+          <width>70</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>70</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_clear_log_buffer">
+        <property name="text">
+         <string>清除日志缓冲区</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_6">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>

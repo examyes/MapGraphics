@@ -8,6 +8,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    qApp->setOrganizationName("atos");
+    qApp->setApplicationName("MapGraphics TileDownloader");
 
     MainWindow w;
     w.show();
