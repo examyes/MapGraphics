@@ -86,7 +86,7 @@ quint8 FileSystemTileSource::maxZoomLevel(QPointF ll)
 
 QString FileSystemTileSource::name() const
 {
-    return "GoogleLocalTileSource";
+    return "FileSystemTileSource";
 }
 
 QString FileSystemTileSource::tileFileExtension() const
