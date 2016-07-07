@@ -297,7 +297,7 @@
       <property name="title">
        <string>下载</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout_11">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
@@ -326,6 +326,13 @@
           <widget class="QPushButton" name="btn_browse">
            <property name="text">
             <string>浏览...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_open_folder">
+           <property name="text">
+            <string>打开目录</string>
            </property>
           </widget>
          </item>
