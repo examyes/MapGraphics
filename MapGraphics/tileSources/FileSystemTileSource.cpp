@@ -9,6 +9,7 @@
 #include <QNetworkReply>
 #include <QTimer>
 #include <QDir>
+#include <QFileInfo>
 
 const qreal PI = 3.14159265358979323846;
 const qreal deg2rad = PI / 180.0;
@@ -104,8 +105,27 @@ void FileSystemTileSource::fetchTile(quint32 x, quint32 y, quint8 z)
                                      QString::number(y),
                                      QString::number(z));
 
-    emit loadImage(x, y, z, m_path + fetchURL + "." + m_tile_file_extension);
+    QString path = m_path + fetchURL + "." + m_tile_file_extension;
 
+    QFileInfo file_info(path);
+    if (file_info.exists())
+    {
+        QImage *image = new QImage(path);
+
+        //Notify client of tile retrieval
+        this->prepareNewlyReceivedTile(x, y, z, image);
+    }
+    else
+    {
+        QImage * image = new QImage(this->tileSize(),
+                                    this->tileSize(),
+                                    QImage::Format_ARGB32_Premultiplied);
+        //It is important to fill with transparent first!
+        image->fill(qRgba(255, 255, 255, 255));
+
+        //Notify client of tile retrieval
+        this->prepareNewlyReceivedTile(x, y, z, image);
+    }
 
 }
 
@@ -114,8 +134,23 @@ void FileSystemTileSource::onLoadImage(quint32 x,
                                        quint8 z,
                                        const QString &path)
 {
-    QImage *image = new QImage(path);
+    QFileInfo file_info(path);
+    if (file_info.exists())
+    {
+        QImage *image = new QImage(path);
 
-    //Notify client of tile retrieval
-    this->prepareNewlyReceivedTile(x, y, z, image);
+        //Notify client of tile retrieval
+        this->prepareNewlyReceivedTile(x, y, z, image);
+    }
+    else
+    {
+        QImage * image = new QImage(this->tileSize(),
+                                    this->tileSize(),
+                                    QImage::Format_ARGB32_Premultiplied);
+        //It is important to fill with transparent first!
+        image->fill(qRgba(255, 255, 255, 255));
+
+        //Notify client of tile retrieval
+        this->prepareNewlyReceivedTile(x, y, z, image);
+    }
 }
