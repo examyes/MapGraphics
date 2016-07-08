@@ -156,6 +156,10 @@ void TileDownloader::download(QPointF geo_start, QPointF geo_stop, int zoom_leve
             }
         }
     }
+    else
+    {
+        m_tiles_count = (m_stop.x() - m_start.x()) * (m_stop.y() - m_start.y());
+    }
 
     m_current_row = m_start.x();
     downloadRow(m_current_row);
