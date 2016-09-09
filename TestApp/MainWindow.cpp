@@ -9,9 +9,11 @@
 #include "tileSources/CompositeTileSource.h"
 #include "tileSources/GoogleTileSource.h"
 #include "guts/CompositeTileSourceConfigurationWidget.h"
+#include "LineObject.h"
 #include "CircleObject.h"
 #include "PolygonObject.h"
 #include "WeatherManager.h"
+#include "Position.h"
 
 #include <QSharedPointer>
 #include <QtDebug>
@@ -49,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setCentralWidget(view);
 
     //Setup some tile sources
-    QSharedPointer<FileSystemTileSource> fsTiles(new FileSystemTileSource("C:/Users/examyes/Desktop/map/"), &QObject::deleteLater);
+    QSharedPointer<FileSystemTileSource> fsTiles(new FileSystemTileSource("C:/webserver/apache-tomcat-8.5.4/webapps/ROOT/map-data", "jpg", "%3/%3_%1_%2_s"), &QObject::deleteLater);
     QSharedPointer<CompositeTileSource> composite(new CompositeTileSource(), &QObject::deleteLater);
 
     composite->addSourceTop(fsTiles);
@@ -64,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->menuWindow->addAction(this->ui->dockWidget->toggleViewAction());
     this->ui->dockWidget->toggleViewAction()->setText("&Layers");
 
-    view->setZoomLevel(13);
+    view->setZoomLevel(5);
     view->centerOn(120.320667362213, 31.428553009033);
     view->enableMousePositionReport(true);
 
@@ -82,8 +84,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_spin_rotation, SIGNAL(valueChanged(int)),
             this, SLOT(setRotation(int)));
 
-    // WeatherManager * weatherMan = new WeatherManager(scene, this);
-    // Q_UNUSED(weatherMan)
+    addLine(scene);
+
+    /*
+    WeatherManager * weatherMan = new WeatherManager(scene, this);
+    Q_UNUSED(weatherMan)
+    */
 }
 
 MainWindow::~MainWindow()
@@ -123,4 +129,18 @@ void MainWindow::setRotation(int i)
     m_view->rotate(i);
 
     m_current_roration = i;
+}
+
+void MainWindow::addLine(MapGraphicsScene *scene)
+{
+    Position a;
+    a.setLongitude(118.878);
+    a.setLatitude(31.7506);
+
+    Position b;
+    b.setLongitude(119);
+    b.setLatitude(33);
+
+    LineObject *line = new LineObject(a, b);
+    scene->addObject(line);
 }

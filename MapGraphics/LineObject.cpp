@@ -1,4 +1,4 @@
-#include "LineObject.h"
+﻿#include "LineObject.h"
 
 #include "guts/Conversions.h"
 #include <QtGlobal>
@@ -48,9 +48,17 @@ void LineObject::paint(QPainter *painter,
     Q_UNUSED(widget);
 
     painter->setRenderHint(QPainter::Antialiasing, true);
+
+#if 0
     QPen pen = painter->pen();
     pen.setWidthF(_thickness);
+    pen.setColor(QColor(255, 0, 0));
     painter->setPen(pen);
+#else
+    QPen pen(Qt::blue, 5);
+    pen.setCosmetic(true);
+    painter->setPen(pen);
+#endif
 
     const qreal avgLat = (_a.latitude() + _b.latitude()) / 2.0;
     const qreal lonPerMeter = Conversions::degreesLonPerMeter(avgLat);

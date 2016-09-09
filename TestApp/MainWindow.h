@@ -11,6 +11,7 @@ class QComboBox;
 class QSpinBox;
 
 class MapGraphicsView;
+class MapGraphicsScene;
 
 class MainWindow : public QMainWindow
 {
@@ -28,6 +29,9 @@ private slots:
 
     void setZoomLevel(int i);
     void setRotation(int i);
+
+private:
+    void addLine(MapGraphicsScene * scene);
 
 private:
     Ui::MainWindow *ui;
